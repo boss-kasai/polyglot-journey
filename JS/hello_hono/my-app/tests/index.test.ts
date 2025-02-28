@@ -22,3 +22,25 @@ describe('Index routes', () => {
     expect(body).toEqual({ status: 'ok' })
   })
 })
+
+describe('FizzBuzz route', () => {
+  it('GET /fizzbuzz/:num should return the expected text', async () => {
+    // /fizzbuzz/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/fizzbuzz/3')
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（テキスト）を確認
+    const text = await res.text()
+    expect(text).toBe('Fizz')
+  })
+
+  it('GET /fizzbuzz/:num 数字に変換できない場合は400を返す ', async () => {
+    // /fizzbuzz/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/fizzbuzz/abc')
+    expect(res.status).toBe(400)
+
+    // レスポンス本文（テキスト）を確認
+    const text = await res.text()
+    expect(text).toBe('Invalid number: abc')
+  })
+})
