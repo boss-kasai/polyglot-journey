@@ -1,14 +1,6 @@
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
-
-#[get("/health")]
-async fn health_check() -> impl Responder {
-    HttpResponse::Ok().body("Ok")
-}
-
-#[get("/hello")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello, Actix-web!")
-}
+use actix_web::{App, HttpServer};
+mod fizzbuzz;
+use hello_actix_web::{health_check, hello, fizzbuzz_endpoint};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -16,8 +8,9 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .service(health_check)
             .service(hello)
+            .service(fizzbuzz_endpoint)
     })
-    .bind(("127.0.0.1", 8080))? // ポート番号はお好みで
+    .bind(("127.0.0.1", 8080))?
     .run()
     .await
 }
