@@ -44,3 +44,49 @@ describe('FizzBuzz route', () => {
     expect(text).toBe('Invalid number: abc')
   })
 })
+
+describe('POST /bmi', () => {
+  it('should return 400 if height or weight is missing', async () => {
+    // heightのみ渡してweightを渡さないケース
+    const res = await app.request('http://localhost/bmi', {
+      method: 'POST',
+      body: JSON.stringify({ height: 170 }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    expect(res.status).toBe(400)
+    const text = await res.text()
+    expect(text).toBe('Invalid request: height and weight are required')
+  })
+
+  it('should return correct BMI and category for valid data', async () => {
+    // height=170, weight=65 の場合、BMIは約22.49となりカテゴリは "Normal weight"
+    const res = await app.request('http://localhost/bmi', {
+      method: 'POST',
+      body: JSON.stringify({ height: 170, weight: 65 }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    // data = { bmi: 22.49, category: "Normal weight" } のイメージ
+    expect(data.bmi).toBe(22.49)        // 小数点2桁四捨五入
+    expect(data.category).toBe('Normal weight')
+  })
+
+  it('should classify BMI < 18.5 as Underweight', async () => {
+    // height=170, weight=50 => BMI 約17.30
+    const res = await app.request('http://localhost/bmi', {
+      method: 'POST',
+      body: JSON.stringify({ height: 170, weight: 50 }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.bmi).toBe(17.3)
+    expect(data.category).toBe('Underweight')
+  })
+
+  // 他にも Overweight / Obesity のケースなどテストを追加
+})
