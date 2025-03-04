@@ -46,6 +46,18 @@ func TestFiboEndpoint(t *testing.T) {
 			wantStatus: http.StatusBadRequest,
 			wantBody:   "Invalid number: abc",
 		},
+		{
+			name:       "異常入力 - 空文字",
+			param:      "",
+			wantStatus: http.StatusNotFound,
+			wantBody:   "404 page not found",
+		},
+		{
+			name:       "異常入力 - 101異常",
+			param:      "101",
+			wantStatus: http.StatusBadRequest,
+			wantBody:   "Too large number",
+		},
 	}
 
 	for _, tt := range tests {
