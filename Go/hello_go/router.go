@@ -88,5 +88,20 @@ func SetupRouter() *gin.Engine {
 		c.String(http.StatusOK, result)
 	})
 
+	// primeエンドポイントの定義
+	router.GET("/prime/:num", func(c *gin.Context) {
+		param := c.Param("num")
+		n, err := strconv.Atoi(param)
+		if err != nil {
+			c.String(http.StatusBadRequest, "Invalid number: %s", param)
+			return
+		} else if n <= 0 {
+			c.String(http.StatusBadRequest, "Invalid input")
+			return
+		}
+		result := getPrimes(n)
+		c.JSON(http.StatusOK, result)
+	})
+
 	return router
 }
