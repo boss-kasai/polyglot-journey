@@ -53,3 +53,20 @@ pub async fn bmi_endpoint(req_body: web::Json<models::BmiRequest>) -> impl Respo
     // JSONとして返す
     HttpResponse::Ok().json(response)
 }
+
+#[get("/fibo/{num}")]
+pub async fn fibonacci_endpoint(path: web::Path<String>) -> impl Responder {
+    let raw = path.into_inner();
+    match raw.parse::<u32>() {
+        Ok(num) => {
+            if num > 186 {
+                return HttpResponse::BadRequest().body("上限値オーバー: 186が最大です");
+            }
+            let result = fizzbuzz::fibonacci(num);
+            HttpResponse::Ok().body(result.to_string())
+        }
+        Err(_) => {
+            HttpResponse::BadRequest().body(format!("Invalid number: {}", raw))
+        }
+    }
+}
