@@ -80,6 +80,9 @@ func SetupRouter() *gin.Engine {
 		} else if n <= 0 {
 			c.String(http.StatusBadRequest, "Invalid input")
 			return
+		} else if n > 100 {
+			c.String(http.StatusBadRequest, "Too large number")
+			return
 		}
 		result := fibo(n)
 		c.String(http.StatusOK, result)
