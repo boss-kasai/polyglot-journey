@@ -70,5 +70,20 @@ func SetupRouter() *gin.Engine {
 
 	})
 
+	// fiboエンドポイントの定義
+	router.GET("/fibo/:num", func(c *gin.Context) {
+		param := c.Param("num")
+		n, err := strconv.Atoi(param)
+		if err != nil {
+			c.String(http.StatusBadRequest, "Invalid number: %s", param)
+			return
+		} else if n <= 0 {
+			c.String(http.StatusBadRequest, "Invalid input")
+			return
+		}
+		result := fibo(n)
+		c.String(http.StatusOK, result)
+	})
+
 	return router
 }
