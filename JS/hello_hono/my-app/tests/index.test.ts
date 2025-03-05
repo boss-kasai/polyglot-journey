@@ -87,6 +87,35 @@ describe('POST /bmi', () => {
     expect(data.bmi).toBe(17.3)
     expect(data.category).toBe('Underweight')
   })
+})
 
-  // 他にも Overweight / Obesity のケースなどテストを追加
+describe('Prime route', () => {
+  it ('GET /prime/:num should return the expected JSON', async () => {
+    // /prime/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/prime/1')
+    expect(res.status).toBe(200)
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual([2])
+  })
+
+  it('GET /prime/:num should return the expected JSON', async () => {
+    // /prime/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/prime/2')
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual([2, 3])
+  })
+
+  it('GET /prime/:num 数字に変換できない場合は400を返す ', async () => {
+    // /prime/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/prime/abc')
+    expect(res.status).toBe(400)
+
+    // レスポンス本文（テキスト）を確認
+    const text = await res.text()
+    expect(text).toBe('Invalid number: abc')
+  })
 })

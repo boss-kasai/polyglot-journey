@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { fizzBuzz } from './fizzbuzz'
+import { getPrime } from './prime'
 
 export const app = new Hono()
 
@@ -42,6 +43,16 @@ app.post('/bmi', async (c) => {
   }
 
   return c.json({ bmi: roundedBmi, category })
+})
+
+app.get(`prime/:num`, (c) => {
+  const rawNum = c.req.param('num')
+  const num = parseInt(rawNum)
+  if (isNaN(num)) {
+    return c.text(`Invalid number: ${rawNum}`, 400)
+  }
+  const primes = getPrime(num)
+  return c.json(primes)
 })
 
 export default app
