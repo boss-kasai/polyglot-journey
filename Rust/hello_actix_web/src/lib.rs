@@ -1,6 +1,7 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 pub mod fizzbuzz;
 pub mod models;
+pub mod prime;
 use crate::models::BmiResponse;
 
 
@@ -64,6 +65,27 @@ pub async fn fibonacci_endpoint(path: web::Path<String>) -> impl Responder {
             }
             let result = fizzbuzz::fibonacci(num);
             HttpResponse::Ok().body(result.to_string())
+        }
+        Err(_) => {
+            HttpResponse::BadRequest().body(format!("Invalid number: {}", raw))
+        }
+    }
+}
+
+#[get("/prime/{num}")]
+pub async fn prime_endpoint(path: web::Path<String>) -> impl Responder {
+    let raw = path.into_inner();
+    match raw.parse::<usize>() {
+        Ok(num) => {
+            if num > 203280221 {
+                return HttpResponse::BadRequest().body("上限値オーバー: 203,280,221が最大です");
+            }
+            if num > 1000{
+                let result = prime::nth_primes(num);
+                return HttpResponse::Ok().json(result);
+            }
+            let result = prime::getPrime(num);
+            HttpResponse::Ok().json(result)
         }
         Err(_) => {
             HttpResponse::BadRequest().body(format!("Invalid number: {}", raw))
