@@ -8,4 +8,9 @@ To run:
 bun run dev
 ```
 
+```sh
+bun test
+```
+
+
 open http://localhost:3000
