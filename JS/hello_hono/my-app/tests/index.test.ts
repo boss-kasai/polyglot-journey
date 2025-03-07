@@ -119,3 +119,55 @@ describe('Prime route', () => {
     expect(text).toBe('Invalid number: abc')
   })
 })
+
+describe('Fibonacci route', () => {
+  it('GET /fibonacci/:num should return the expected JSON', async () => {
+    // /fibonacci/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/fibonacci/0')
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual(0)
+  })
+
+  it('GET /fibonacci/:num should return the expected JSON', async () => {
+    // /fibonacci/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/fibonacci/1')
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual(1)
+  })
+
+  it('GET /fibonacci/:num should return the expected JSON', async () => {
+    // /fibonacci/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/fibonacci/2')
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual(1)
+  })
+
+  it('GET /fibonacci/:num should return the expected JSON', async () => {
+    // /fibonacci/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/fibonacci/3')
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual(2)
+  })
+
+  it('GET /fibonacci/:num should return the expected JSON', async () => {
+    // /fibonacci/:num エンドポイントをテスト
+    const res = await app.request('http://localhost/fibonacci/4')
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual(3)
+  })
+})
