@@ -66,4 +66,40 @@ app.get('/fibonacci/:num', (c) => {
   return c.json(fib)
 })
 
+app.post('/loan', async (c) => {
+  // リクエスト JSON: { monthlyPayment, years, annualRate }
+  const { monthlyPayment, years, annualRate } = await c.req.json<{
+    monthlyPayment?: number
+    years?: number
+    annualRate?: number
+  }>()
+
+  // バリデーションチェック
+  if (
+    typeof monthlyPayment !== 'number' ||
+    typeof years !== 'number' ||
+    typeof annualRate !== 'number'
+  ) {
+    return c.text('Invalid input', 400)
+  }
+  // 月々の返済額が0以下の場合はエラー
+  if (monthlyPayment <= 0) {
+    return c.text('Monthly payment should be greater than 0', 400)
+  }
+
+  // 計算
+  const n = years * 12
+  const i = annualRate / 12
+  if (i === 0) {
+    return c.text('Annual rate should not be 0', 400)
+  }
+
+  const numerator = 1 - Math.pow(1 + i, -n)
+  const principal = monthlyPayment * (numerator / i)
+
+  // 結果を返す (整数に四捨五入するか、少数第2位まで表示するかなど、仕様に合わせて)
+  return c.json({ principal })
+})
+
+
 export default app
