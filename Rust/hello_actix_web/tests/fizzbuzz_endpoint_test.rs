@@ -46,6 +46,17 @@ async fn test_bmi_endpoint() {
     let body_json: Value = serde_json::from_slice(&body).unwrap();
     assert_eq!(body_json["bmi"].as_f64().unwrap(), 20.88);
     assert_eq!(body_json["category"].as_str().unwrap(), "Normal weight");
+    
+    // 浮動小数点の誤差を検証
+    let req_flot = test::TestRequest::post()
+        .uri("/bmi")
+        .set_json(&json!({"height": 178.0, "weight": 63.72})
+    ).to_request();
+    let resp_flot = test::call_service(&app, req_flot).await;
+    assert_eq!(resp_flot.status(), StatusCode::OK);
+    let body_flot = test::read_body(resp_flot).await;
+    let body_json_flot: Value = serde_json::from_slice(&body_flot).unwrap();
+    assert_eq!(body_json_flot["bmi"].as_f64().unwrap(), 20.11);
 }
 
 #[actix_web::test]

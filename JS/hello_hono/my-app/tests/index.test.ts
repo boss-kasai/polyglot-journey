@@ -74,6 +74,20 @@ describe('POST /bmi', () => {
     expect(data.category).toBe('Normal weight')
   })
 
+  it('f64 error', async () => {
+    // height=178.0, weight=63.72 の場合、BMIは約20.11となりカテゴリは "Normal weight"
+    const res = await app.request('http://localhost/bmi', {
+      method: 'POST',
+      body: JSON.stringify({ height: 178.0, weight: 63.72 }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    expect(res.status).toBe(200)
+    const data = await res.json()
+    expect(data.bmi).toBe(20.11)        // 小数点2桁四捨五入
+    expect(data.category).toBe('Normal weight')
+    })
+
   it('should classify BMI < 18.5 as Underweight', async () => {
     // height=170, weight=50 => BMI 約17.30
     const res = await app.request('http://localhost/bmi', {
