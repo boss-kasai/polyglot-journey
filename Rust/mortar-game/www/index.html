@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>迫撃砲シミュレーションゲーム</title>
+  <style>
+    canvas { border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  角度: <input type="number" id="angle" value="45" step="1"> 度
+  速度: <input id="velocity" type="number" value="50"> m/s
+  <button id="launch">発射</button>
+  <br><br>
+  <canvas id="canvas" width="600" height="300"></canvas>
+
+  <script type="module">
+    import init, { simulate_trajectory } from "../pkg/mortar_game.js";
+
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    async function drawTrajectory(angle, velocity) {
+      await init();
+      const trajectory = simulate_trajectory(angle, velocity, 0.1);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+
+      trajectory.forEach((point, index) => {
+        const x = point.x;
+        const y = canvas.height - point.y;
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+
+      ctx.strokeStyle = 'blue';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, canvas.height, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    document.getElementById('launch').onclick = async () => {
+      const angle = parseFloat(document.getElementById('angle').value);
+      const velocity = parseFloat(document.getElementById('velocity').value);
+      drawTrajectory(angle, velocity);
+    };
+
+    init();
+  </script>
+</body>
+</html>
