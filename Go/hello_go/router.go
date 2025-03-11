@@ -103,5 +103,22 @@ func SetupRouter() *gin.Engine {
 		c.JSON(http.StatusOK, result)
 	})
 
+	// loanエンドポイントの定義
+	router.POST("/loan", func(c *gin.Context) {
+		var req struct {
+			Amount     float64
+			years      int
+			annualRate float64
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.String(http.StatusBadRequest, "Invalid request: %v", err)
+			return
+		}
+		result := calculateLoanPrincipal(req.Amount, req.years, req.annualRate)
+		c.JSON(http.StatusOK, gin.H{
+			"principal": result,
+		})
+	})
+
 	return router
 }
