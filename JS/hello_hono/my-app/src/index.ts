@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { fizzBuzz } from './fizzbuzz'
 import { getPrime } from './prime'
 import { getFibonacci } from './fibonacci'
+import { getHash } from './hash'
 
 export const app = new Hono()
 
@@ -99,6 +100,16 @@ app.post('/loan', async (c) => {
 
   // 結果を返す (整数に四捨五入するか、少数第2位まで表示するかなど、仕様に合わせて)
   return c.json({ principal })
+})
+
+app.post('/hash', async (c) => {
+  // リクエスト JSON: { text }
+  const { text } = await c.req.json<{ text?: string }>()
+  if (!text) {
+    return c.text('Invalid input', 400)
+  }
+  const hashed = await getHash(text)
+  return c.json({ hashed })
 })
 
 

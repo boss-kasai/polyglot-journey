@@ -185,3 +185,31 @@ describe('Fibonacci route', () => {
     expect(body).toEqual(3)
   })
 })
+
+describe('hasu route', () => {
+  it('POST /hash should return the expected JSON', async () => {
+    // /hasu エンドポイントをテスト
+    const res = await app.request('http://localhost/hash', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'password' }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual({ hashed: '$2b$10$ABCDEFGHIJKLMNOPQRSTUOiAi7OcdE4zRCh6NcGWusEcNPtq6/w8.' })
+  })
+  it ('POST /hash should return 400 if text is missing', async () => {
+    // /hasu エンドポイントをテスト
+    const res = await app.request('http://localhost/hash', {
+      method: 'POST',
+      body: JSON.stringify({}),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    expect(res.status).toBe(400)
+    // レスポンス本文（テキスト）を確認
+    const text = await res.text()
+    expect(text).toBe('Invalid input')
+  })
+})
