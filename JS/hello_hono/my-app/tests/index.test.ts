@@ -186,6 +186,74 @@ describe('Fibonacci route', () => {
   })
 })
 
+describe('stringcount route', () => {
+  it('POST /stringcount should return the expected JSON', async () => {
+    // /stringcount エンドポイントをテスト
+    const res = await app.request('http://localhost/stringcount', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'hello' }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual({ count: 5 })
+  })
+  it ('POST /stringcount 空欄を含む処理の確認', async () => {
+    // /stringcount エンドポイントをテスト
+    const res = await app.request('http://localhost/stringcount', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'hello world' }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual({ count: 11 })
+  })
+  it ('POST /stringcount 日本語の処理', async () => {
+    // /stringcount エンドポイントをテスト
+    const res = await app.request('http://localhost/stringcount', {
+      method: 'POST',
+      body: JSON.stringify({ text: 'こんにちは　世界' }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    expect(res.status).toBe(200)
+
+    // レスポンス本文（JSON）を確認
+    const body = await res.json()
+    expect(body).toEqual({ count: 8 })
+  })
+  it ('POST /stringcount 空欄処理の確認', async () => {
+    // /stringcount エンドポイントをテスト
+    const res = await app.request('http://localhost/stringcount', {
+      method: 'POST',
+      body: JSON.stringify({ text: '' }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    expect(res.status).toBe(400)
+
+    // レスポンス本文（JSON）を確認
+    const text = await res.text()
+    expect(text).toBe('Invalid input')
+  })
+  it ('POST /stringcount should return 400 if text is missing', async () => {
+    // /stringcount エンドポイントをテスト
+    const res = await app.request('http://localhost/stringcount', {
+      method: 'POST',
+      body: JSON.stringify({}),
+      headers: { 'Content-Type': 'application/json' }
+    })
+    expect(res.status).toBe(400)
+
+    // レスポンス本文（テキスト）を確認
+    const text = await res.text()
+    expect(text).toBe('Invalid input')
+  })
+})
+
 describe('hasu route', () => {
   it('POST /hash should return the expected JSON', async () => {
     // /hasu エンドポイントをテスト

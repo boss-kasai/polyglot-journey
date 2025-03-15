@@ -102,6 +102,15 @@ app.post('/loan', async (c) => {
   return c.json({ principal })
 })
 
+app.post('/stringcount', async (c) => {
+  const { text } = await c.req.json<{ text?: string }>()
+  if (!text) {
+    return c.text('Invalid input', 400)
+  }
+  const count = text.length
+  return c.json({ count })
+})
+
 app.post('/hash', async (c) => {
   // リクエスト JSON: { text }
   const { text } = await c.req.json<{ text?: string }>()
