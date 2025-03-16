@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-pub fn fizzbuzz(num: u32) -> String {
+pub fn fizzbuzz_checker(num: u32) -> String {
     if num % 15 == 0 {
         "FizzBuzz".to_string()
     } else if num % 3 == 0 {
@@ -12,7 +12,7 @@ pub fn fizzbuzz(num: u32) -> String {
     }
 }
 
-fn fib_memo(num: u32, memo: &mut HashMap<u32, u128>) -> u128 {
+pub fn fib_memo(num: u32, memo: &mut HashMap<u32, u128>) -> u128 {
     if let Some(&result) = memo.get(&num) {
         return result;
     }
