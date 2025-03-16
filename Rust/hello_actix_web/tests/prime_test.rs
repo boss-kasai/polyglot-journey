@@ -1,4 +1,4 @@
-use hello_actix_web::prime::getPrime;
+use hello_actix_web::prime::get_prime;
 use hello_actix_web::prime::nth_primes;
 
 #[test]
@@ -11,7 +11,7 @@ fn test_prime() {
         (5, vec![2, 3, 5, 7, 11]),
     ];
     for (input, expected) in cases {
-        assert_eq!(getPrime(input), expected);
+        assert_eq!(get_prime(input), expected);
     }
 }
 

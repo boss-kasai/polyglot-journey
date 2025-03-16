@@ -4,6 +4,7 @@ pub mod models;
 pub mod prime;
 pub mod four_arithmetic_operations; //ファイルを指定
 use crate::models::BmiResponse;
+use crate::fizzbuzz::fizzbuzz_checker; // モジュールを指定
 
 
 #[get("/health")]
@@ -24,7 +25,7 @@ pub async fn fizzbuzz_endpoint(path: web::Path<String>) -> impl Responder {
     match raw.parse::<u32>() {
         Ok(num) => {
             // 正常に u32 化できたので fizzbuzz などの処理
-            let result = fizzbuzz::fizzbuzz(num);
+            let result = fizzbuzz_checker(num);
             HttpResponse::Ok().body(result)
         }
         Err(e) => {
@@ -85,7 +86,7 @@ pub async fn prime_endpoint(path: web::Path<String>) -> impl Responder {
                 let result = prime::nth_primes(num);
                 return HttpResponse::Ok().json(result);
             }
-            let result = prime::getPrime(num);
+            let result = prime::get_prime(num);
             HttpResponse::Ok().json(result)
         }
         Err(_) => {
@@ -94,7 +95,7 @@ pub async fn prime_endpoint(path: web::Path<String>) -> impl Responder {
     }
 }
 
-#[get("/four_arithmetic_operations/{str}")]
+#[get("/four_arithmetic_operations/{expr}")]
 pub async fn four_arithmetic_operations_endpoint(path: web::Path<String>) -> impl Responder {
     let raw = path.into_inner();
     match four_arithmetic_operations::evaluate_expression(&raw) {

@@ -1,8 +1,7 @@
 // n番目までの素数を返す
-use std::cmp;
 use std::f64;
 
-pub fn getPrime(n: usize) -> Vec<u32> {
+pub fn get_prime(n: usize) -> Vec<u32> {
     let mut primes = vec![];
     let mut num = 2;
 

@@ -1,7 +1,5 @@
 use actix_web::{test, http::StatusCode, App};
 use hello_actix_web::{health_check, hello, four_arithmetic_operations_endpoint};
-use serde_json::json;
-use serde_json::Value;
 
 #[actix_web::test]
 async fn test_four_arithmetic_operations_endpoint() {
