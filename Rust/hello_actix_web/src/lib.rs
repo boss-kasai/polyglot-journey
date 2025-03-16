@@ -2,6 +2,7 @@ use actix_web::{get, post, web, HttpResponse, Responder};
 pub mod fizzbuzz;
 pub mod models;
 pub mod prime;
+pub mod four_arithmetic_operations; //ファイルを指定
 use crate::models::BmiResponse;
 
 
@@ -90,5 +91,14 @@ pub async fn prime_endpoint(path: web::Path<String>) -> impl Responder {
         Err(_) => {
             HttpResponse::BadRequest().body(format!("Invalid number: {}", raw))
         }
+    }
+}
+
+#[get("/four_arithmetic_operations/{str}")]
+pub async fn four_arithmetic_operations_endpoint(path: web::Path<String>) -> impl Responder {
+    let raw = path.into_inner();
+    match four_arithmetic_operations::evaluate_expression(&raw) {
+        Ok(result) => HttpResponse::Ok().body(result.to_string()),
+        Err(err) => HttpResponse::BadRequest().body(err),
     }
 }
