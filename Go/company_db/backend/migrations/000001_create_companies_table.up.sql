@@ -1,0 +1,1 @@
+ALTER TABLE companies ALTER COLUMN postal_code DROP NOT NULL;
