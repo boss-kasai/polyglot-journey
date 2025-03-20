@@ -4,6 +4,7 @@ pub mod models;
 pub mod prime;
 pub mod four_arithmetic_operations; //ファイルを指定
 pub mod loan;
+pub mod hash_check;
 use crate::models::BmiResponse;
 use crate::models::LoanRequest;
 use crate::fizzbuzz::fizzbuzz_checker; // モジュールを指定
@@ -110,4 +111,13 @@ pub async fn four_arithmetic_operations_endpoint(path: web::Path<String>) -> imp
 pub async fn loan_endpoint(req_body: web::Json<models::LoanRequest>) -> impl Responder {
     let principal = loan::calculate_loan_principal(req_body.monthly_payment, req_body.years, req_body.annual_rate);
     HttpResponse::Ok().json(principal)
+}
+
+#[get("/hash_check/{hash}")]
+pub async fn hash_check_endpoint(path: web::Path<String>) -> impl Responder {
+    let raw = path.into_inner();
+    match hash_check::get_hash(&raw) {
+        Ok(hashed) => HttpResponse::Ok().json(serde_json::json!({ "hashed": hashed })),
+        Err(err) => HttpResponse::BadRequest().json(serde_json::json!({ "error": err.to_string() })),
+    }
 }
