@@ -13,3 +13,10 @@ pub struct BmiResponse {
     pub bmi: f32,
     pub category: String,
 }
+
+#[derive(Deserialize)]
+pub struct LoanRequest {
+    pub monthly_payment: f64,
+    pub years: u32,
+    pub annual_rate: f64,
+}

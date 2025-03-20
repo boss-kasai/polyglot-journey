@@ -3,7 +3,9 @@ pub mod fizzbuzz;
 pub mod models;
 pub mod prime;
 pub mod four_arithmetic_operations; //ファイルを指定
+pub mod loan;
 use crate::models::BmiResponse;
+use crate::models::LoanRequest;
 use crate::fizzbuzz::fizzbuzz_checker; // モジュールを指定
 
 
@@ -102,4 +104,10 @@ pub async fn four_arithmetic_operations_endpoint(path: web::Path<String>) -> imp
         Ok(result) => HttpResponse::Ok().body(result.to_string()),
         Err(err) => HttpResponse::BadRequest().body(err),
     }
+}
+
+#[post("/loan")]
+pub async fn loan_endpoint(req_body: web::Json<models::LoanRequest>) -> impl Responder {
+    let principal = loan::calculate_loan_principal(req_body.monthly_payment, req_body.years, req_body.annual_rate);
+    HttpResponse::Ok().json(principal)
 }
