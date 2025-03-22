@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"unicode/utf8"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -117,6 +119,36 @@ func SetupRouter() *gin.Engine {
 		result := calculateLoanPrincipal(req.Amount, req.years, req.annualRate)
 		c.JSON(http.StatusOK, gin.H{
 			"principal": result,
+		})
+	})
+
+	// hashエンドポイントの定義
+	router.POST("/hash", func(c *gin.Context) {
+		var req struct {
+			Text string `json:"text" binding:"required"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.String(http.StatusBadRequest, "Invalid request: %v", err)
+			return
+		}
+		result := HashString(req.Text)
+		c.JSON(http.StatusOK, gin.H{
+			"hashed": result,
+		})
+	})
+
+	// 文字数を数えるエンドポイントの定義
+	router.POST("/countstring", func(c *gin.Context) {
+		var req struct {
+			Text string `json:"text" binding:"required"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.String(http.StatusBadRequest, "Invalid request")
+			return
+		}
+		result := utf8.RuneCountInString(req.Text)
+		c.JSON(http.StatusOK, gin.H{
+			"count": result,
 		})
 	})
 
