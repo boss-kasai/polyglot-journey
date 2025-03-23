@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"github.com/joho/godotenv"
 )
 
 var DB *gorm.DB
@@ -36,3 +36,11 @@ func ConnectDB() {
 	DB = db
 }
 
+func ConnectDatabase(dsn string) (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	DB = db
+	return db, nil
+}
