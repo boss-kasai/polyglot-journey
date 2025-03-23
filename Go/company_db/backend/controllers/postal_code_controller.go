@@ -2,70 +2,57 @@ package controllers
 
 import (
 	"net/http"
-	"strings"
 
 	"company_db/backend/config"
 	"company_db/backend/models"
+	"company_db/backend/requests"
+	"company_db/backend/responses"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm/clause"
 )
 
-// リクエスト用構造体
-type CreatePostalCodeRequest struct {
-	PostalCode string `json:"postal_code" binding:"required"`
-	Address    string `json:"address" binding:"required"`
-}
-
 func CreatePostalCode(c *gin.Context) {
-	var req CreatePostalCodeRequest
-
-	// リクエストの JSON をバインド
+	var req requests.CreatePostalCodeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responses.CreatePostalCodeErrorResponse{Error: err.Error()})
 		return
 	}
 
-	// 郵便番号データを作成
 	postalCode := models.PostalCode{
 		PostalCode: req.PostalCode,
 		Address:    req.Address,
 	}
 
-	// データベースに保存
-	if err := config.DB.Create(&postalCode).Error; err != nil {
-		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Postal code already exists"})
-			return
-		}
-		// `ON CONFLICT DO NOTHING` を適用
-		result := config.DB.Clauses(clause.OnConflict{
-			Columns:   []clause.Column{{Name: "postal_code"}},
-			DoNothing: true,
-		}).Create(&postalCode)
+	// ON CONFLICT DO NOTHING で実行
+	result := config.DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "postal_code"}},
+		DoNothing: true,
+	}).Create(&postalCode)
 
-		if result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-			return
-		}
+	// エラーがあれば500
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, responses.CreatePostalCodeErrorResponse{Error: result.Error.Error()})
+		return
+	}
 
-		if result.RowsAffected == 0 {
-			// 既存のデータがあった場合
-			c.JSON(http.StatusConflict, gin.H{
-				"message":     "この郵便番号はすでに登録されています",
-				"postal_code": postalCode.PostalCode,
-			})
-			return
-		}
+	// 挿入されなかった（＝重複）
+	if result.RowsAffected == 0 {
+		// var existing models.PostalCode
+		// config.DB.Where("postal_code = ?", req.PostalCode).First(&existing)
 
-		// 新規登録成功
-		c.JSON(http.StatusCreated, gin.H{
-			"message":     "郵便番号を登録しました",
-			"postal_code": postalCode.PostalCode,
+		c.JSON(http.StatusConflict, responses.CreatePostalCodeDuplicationResponse{
+			Message: "この郵便番号はすでに登録されています",
+			PostalCode: models.PostalCode{
+				PostalCode: req.PostalCode, // ← リクエストから返す
+			},
 		})
 		return
 	}
 
-	// 成功レスポンス
-	c.JSON(http.StatusCreated, gin.H{"message": "Postal code created successfully", "postal_code": postalCode})
+	// 成功
+	c.JSON(http.StatusCreated, responses.CreatePostalCodeResponse{
+		Message:    "郵便番号を登録しました",
+		PostalCode: postalCode,
+	})
 }
