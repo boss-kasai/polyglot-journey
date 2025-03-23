@@ -29,13 +29,9 @@ func TestMain(m *testing.M) {
 	}
 
 	config.DB.AutoMigrate(&models.PostalCode{})
-	// config.DB.Exec(`
-	// 	CREATE TABLE IF NOT EXISTS postal_codes (
-	// 		id SERIAL PRIMARY KEY,
-	// 		postal_code VARCHAR(20) UNIQUE NOT NULL,
-	// 		address TEXT NOT NULL
-	// 	);
-	// `)
+	config.DB.AutoMigrate(&models.Company{})
+	config.DB.AutoMigrate(&models.Tag{})
+	config.DB.AutoMigrate(&models.TagCompany{})
 
 	gin.SetMode(gin.TestMode)
 	TestRouter = gin.Default()
