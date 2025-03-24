@@ -20,3 +20,13 @@ pub struct LoanRequest {
     pub years: u32,
     pub annual_rate: f64,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct TextRequest {
+    pub text: String,
+}
+
+#[derive(Serialize)]
+pub struct CountResponse {
+    pub length: usize,
+}
