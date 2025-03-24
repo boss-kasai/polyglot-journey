@@ -6,24 +6,16 @@ import (
 
 	"company_db/backend/config"
 	"company_db/backend/models"
+	"company_db/backend/requests"
+	"company_db/backend/responses"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/datatypes"
 )
 
-// リクエスト用構造体
-type CreateCompanyRequest struct {
-	Name        string   `json:"name" binding:"required"`
-	URL         []string `json:"url"`
-	PhoneNumber string   `json:"phone_number"`
-	PostalCode  string   `json:"postal_code"`
-	Address     string   `json:"address"`
-	Tags        []string `json:"tags"`
-}
-
 // 企業データ登録エンドポイント
 func CreateCompany(c *gin.Context) {
-	var req CreateCompanyRequest
+	var req requests.CreateCompanyRequest
 
 	// リクエストの JSON をバインド
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -64,5 +56,5 @@ func CreateCompany(c *gin.Context) {
 	}
 
 	// 成功レスポンス
-	c.JSON(http.StatusCreated, gin.H{"message": "Company created successfully", "company": company})
+	c.JSON(http.StatusCreated, responses.CreateCompanyResponse{Message: "Company created successfully"})
 }
