@@ -1,6 +1,6 @@
 use actix_web::{App, HttpServer};
 mod fizzbuzz;
-use hello_actix_web::{health_check, hello, fizzbuzz_endpoint, bmi_endpoint, fibonacci_endpoint, prime_endpoint, four_arithmetic_operations_endpoint};
+use hello_actix_web::{health_check, hello, fizzbuzz_endpoint, bmi_endpoint, fibonacci_endpoint, prime_endpoint, four_arithmetic_operations_endpoint, char_count_endpoint};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -13,6 +13,7 @@ async fn main() -> std::io::Result<()> {
             .service(fibonacci_endpoint)
             .service(prime_endpoint)
             .service(four_arithmetic_operations_endpoint)
+            .service(char_count_endpoint)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

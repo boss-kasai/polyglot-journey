@@ -7,6 +7,8 @@ pub mod loan;
 pub mod hash_check;
 use crate::models::BmiResponse;
 use crate::models::LoanRequest;
+use crate::models::TextRequest;
+use crate::models::CountResponse;
 use crate::fizzbuzz::fizzbuzz_checker; // モジュールを指定
 
 
@@ -120,4 +122,11 @@ pub async fn hash_check_endpoint(path: web::Path<String>) -> impl Responder {
         Ok(hashed) => HttpResponse::Ok().json(serde_json::json!({ "hashed": hashed })),
         Err(err) => HttpResponse::BadRequest().json(serde_json::json!({ "error": err.to_string() })),
     }
+}
+
+#[post("/char_count")]
+pub async fn char_count_endpoint(req_body: web::Json<TextRequest>) -> impl Responder {
+    let count = req_body.text.chars().count(); // 文字数（Unicode考慮）
+    let response = CountResponse { length: count };
+    HttpResponse::Ok().json(response)
 }
