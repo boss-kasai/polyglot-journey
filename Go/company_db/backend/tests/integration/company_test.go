@@ -60,7 +60,23 @@ func TestCreateCompany_Success(t *testing.T) {
 
 	// DBが正しく挿入されたかを確認
 	var result models.Company
-	db_err := config.DB.Where("name = ?", "株式会社テスト").First(&result).Error
+	db_err := config.DB.
+		Preload("PostalCode"). // 外部キーの郵便番号
+		Preload("Tags").       // 多対多のタグ
+		Where("name = ?", "株式会社テスト").
+		First(&result).Error
+
 	assert.NoError(t, db_err)
 	assert.Equal(t, "株式会社テスト", result.Name)
+	assert.Equal(t, "09012345678", result.PhoneNumber)
+	assert.Equal(t, "0123456", result.PostalCode.PostalCode)
+	assert.Equal(t, "東京都港区", result.Address)
+	assert.Equal(t, 2, len(result.Tags))
+
+	tagNames := make([]string, len(result.Tags))
+	for i, tag := range result.Tags {
+		tagNames[i] = tag.Name
+	}
+	assert.ElementsMatch(t, []string{"IT", "Web"}, tagNames) // 順番は関係なしで要素が一致しているか
+
 }
