@@ -36,23 +36,39 @@ func CreateCompany(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Postal code not found"})
 		return
 	}
-	var postalCodeID = postalCode.ID
-
-	// Tagsを登録(既存のデータがある場合は登録しないでIDを取得)
 
 	// 企業データを作成
 	company := models.Company{
-		Name:        req.Name,
-		URL:         datatypes.JSON(urlJSON), // ✅ 修正：[]byte に変換して代入
-		PhoneNumber: req.PhoneNumber,
-		PostalCode:  postalCodeID,
-		Address:     req.Address,
+		Name:         req.Name,
+		URL:          datatypes.JSON(urlJSON), // ✅ 修正：[]byte に変換して代入
+		PhoneNumber:  req.PhoneNumber,
+		PostalCodeID: postalCode.ID,
+		Address:      req.Address,
 	}
 
 	// データベースに保存
 	if err := config.DB.Create(&company).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create company"})
 		return
+	}
+
+	// タグを登録
+	for _, tagName := range req.Tags {
+		var tag models.Tag
+		if err := config.DB.Where("name = ?", tagName).First(&tag).Error; err != nil {
+			// タグが存在しない場合は新規作成
+			tag = models.Tag{Name: tagName}
+			if err := config.DB.Create(&tag).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tag"})
+				return
+			}
+		}
+		// 中間テーブルに保存
+		err := config.DB.Create(&models.TagCompany{TagID: tag.ID, CompanyID: company.ID}).Error
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tag_company"})
+			return
+		}
 	}
 
 	// 成功レスポンス
