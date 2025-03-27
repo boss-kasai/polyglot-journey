@@ -17,23 +17,23 @@ import (
 func CreateCompany(c *gin.Context) {
 	var req requests.CreateCompanyRequest
 
-	// リクエストの JSON をバインド
+	// リクエストの JSON をバインド. ここでbinding:"required"が指定されているので、リクエストのJSONに必須のフィールドが含まれていない場合はエラーを返す.
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, responses.CreateCompanyErrorResponse{Error: err.Error()})
 		return
 	}
 
 	// []string を JSON に変換
 	urlJSON, err := json.Marshal(req.URL)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to convert URL to JSON"})
+		c.JSON(http.StatusInternalServerError, responses.CreateCompanyErrorResponse{Error: "Failed to convert URL to JSON"})
 		return
 	}
 
 	// postal_codeのIDを取得
 	var postalCode models.PostalCode
 	if err := config.DB.Where("postal_code = ?", req.PostalCode).First(&postalCode).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Postal code not found"})
+		c.JSON(http.StatusBadRequest, responses.CreateCompanyErrorResponse{Error: "Postal code not found"})
 		return
 	}
 
@@ -48,7 +48,7 @@ func CreateCompany(c *gin.Context) {
 
 	// データベースに保存
 	if err := config.DB.Create(&company).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create company"})
+		c.JSON(http.StatusInternalServerError, responses.CreateCompanyErrorResponse{Error: "Failed to create company"})
 		return
 	}
 
@@ -59,14 +59,14 @@ func CreateCompany(c *gin.Context) {
 			// タグが存在しない場合は新規作成
 			tag = models.Tag{Name: tagName}
 			if err := config.DB.Create(&tag).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tag"})
+				c.JSON(http.StatusInternalServerError, responses.CreateCompanyErrorResponse{Error: "Failed to create tag"})
 				return
 			}
 		}
 		// 中間テーブルに保存
 		err := config.DB.Create(&models.TagCompany{TagID: tag.ID, CompanyID: company.ID}).Error
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tag_company"})
+			c.JSON(http.StatusInternalServerError, responses.CreateCompanyErrorResponse{Error: "Failed to create tag_company"})
 			return
 		}
 	}
