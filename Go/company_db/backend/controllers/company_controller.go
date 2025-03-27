@@ -11,6 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/datatypes"
+	"gorm.io/gorm"
 )
 
 // 企業データ登録エンドポイント
@@ -46,29 +47,34 @@ func CreateCompany(c *gin.Context) {
 		Address:      req.Address,
 	}
 
-	// データベースに保存
-	if err := config.DB.Create(&company).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create company"})
-		return
-	}
+	err = config.DB.Transaction(func(tx *gorm.DB) error {
+		// トランザクション内は常に tx を使う！
+		if err := tx.Create(&company).Error; err != nil {
+			return err
+		}
 
-	// タグを登録
-	for _, tagName := range req.Tags {
-		var tag models.Tag
-		if err := config.DB.Where("name = ?", tagName).First(&tag).Error; err != nil {
-			// タグが存在しない場合は新規作成
-			tag = models.Tag{Name: tagName}
-			if err := config.DB.Create(&tag).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tag"})
-				return
+		for _, tagName := range req.Tags {
+			var tag models.Tag
+			if err := tx.Where("name = ?", tagName).First(&tag).Error; err != nil {
+				tag = models.Tag{Name: tagName}
+				if err := tx.Create(&tag).Error; err != nil {
+					return err
+				}
+			}
+			if err := tx.Create(&models.TagCompany{
+				TagID:     tag.ID,
+				CompanyID: company.ID,
+			}).Error; err != nil {
+				return err
 			}
 		}
-		// 中間テーブルに保存
-		err := config.DB.Create(&models.TagCompany{TagID: tag.ID, CompanyID: company.ID}).Error
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create tag_company"})
-			return
-		}
+
+		return nil // すべて成功 → commit
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create company"})
+		return
 	}
 
 	// 成功レスポンス
