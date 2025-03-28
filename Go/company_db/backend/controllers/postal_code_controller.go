@@ -56,3 +56,36 @@ func CreatePostalCode(c *gin.Context) {
 		PostalCode: postalCode,
 	})
 }
+
+func SearchPostalCode(c *gin.Context) {
+	postalCode := c.Query("postal_code")
+	address := c.Query("address")
+
+	// postal_code と address が両方とも空の場合はエラー
+	if postalCode == "" && address == "" {
+		c.JSON(http.StatusBadRequest, responses.SearchPostalCodeErrorResponse{Error: "検索条件が指定されていません"})
+		return
+	}
+
+	var postalCodes []models.PostalCode
+	query := config.DB.Model(&models.PostalCode{})
+
+	// 柔軟に検索条件を追加
+	if postalCode != "" {
+		query = query.Where("postal_code LIKE ?", "%"+postalCode+"%")
+	}
+	if address != "" {
+		query = query.Where("address LIKE ?", "%"+address+"%")
+	}
+
+	// 実行
+	if err := query.Find(&postalCodes).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, responses.SearchPostalCodeErrorResponse{Error: "検索に失敗しました"})
+		return
+	}
+
+	c.JSON(http.StatusOK, responses.SearchPostalCodeResponse{
+		Message:     "郵便番号を取得しました",
+		PostalCodes: postalCodes,
+	})
+}
