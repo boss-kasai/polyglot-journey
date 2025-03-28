@@ -12,6 +12,8 @@ func SetupRoutes(r *gin.Engine) {
 	r.POST("/companies", controllers.CreateCompany)
 	// 郵便番号登録エンドポイント
 	r.POST("/postal_codes", controllers.CreatePostalCode)
+	// 郵便番号検索エンドポイント
+	r.GET("/postal_codes", controllers.SearchPostalCode)
 	// ヘルスチェック
 	r.GET("/health", controllers.HealthCheck)
 }
