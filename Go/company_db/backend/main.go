@@ -32,4 +32,3 @@ func main() {
 	log.Println("Server is running on port 8080...")
 	r.Run(":8080") // ポート 8080 で起動
 }
-

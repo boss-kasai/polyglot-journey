@@ -26,4 +26,3 @@ func HealthCheck(c *gin.Context) {
 	// サーバー & DB が正常なら OK を返す
 	c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Server is healthy"})
 }
-

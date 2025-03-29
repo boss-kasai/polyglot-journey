@@ -5,4 +5,3 @@ type TagCompany struct {
 	CompanyID string `gorm:"type:uuid;not null;primaryKey;foreignKey:CompanyID;references:ID"`
 	TagID     string `gorm:"type:uuid;not null;primaryKey;foreignKey:TagID;references:ID"`
 }
-
