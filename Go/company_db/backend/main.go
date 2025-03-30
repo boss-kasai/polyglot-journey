@@ -30,5 +30,7 @@ func main() {
 
 	// サーバー起動
 	log.Println("Server is running on port 8080...")
-	r.Run(":8080") // ポート 8080 で起動
+	if err := r.Run(":8080"); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
 }

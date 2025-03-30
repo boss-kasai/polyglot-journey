@@ -10,13 +10,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/testcontainers/testcontainers-go"
 )
 
-var postalCodeContainer testcontainers.Container
-var postalCodeRouter *gin.Engine
+// var postalCodeContainer testcontainers.Container
+// var postalCodeRouter *gin.Engine
 
 func TestPostalCodesTableExists(t *testing.T) {
 	exists := config.DB.Migrator().HasTable("postal_codes")
