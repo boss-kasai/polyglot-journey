@@ -8,7 +8,7 @@ import (
 
 // PostalCode テーブル
 type PostalCode struct {
-	ID         int            `gorm:"primaryKey;autoIncrement" json:"id`
+	ID         int            `gorm:"primaryKey;autoIncrement" json:"id"`
 	PostalCode string         `gorm:"type:varchar(10);not null;unique" json:"postal_code"`
 	Address    string         `gorm:"type:varchar(255);not null" json:"address"`
 	CreatedAt  time.Time      `gorm:"default:now()" json:"created_at"`
