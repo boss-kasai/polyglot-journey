@@ -1,4 +1,4 @@
-package integration
+package company_test
 
 import (
 	"bytes"
@@ -13,9 +13,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
-
-// var companyContainer testcontainers.Container
-// var companyRouter *gin.Engine
 
 func TestCompaniesTableExists(t *testing.T) {
 	exists := config.DB.Migrator().HasTable("companies")

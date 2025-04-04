@@ -1,4 +1,4 @@
-package integration
+package health_test
 
 import (
 	"net/http"

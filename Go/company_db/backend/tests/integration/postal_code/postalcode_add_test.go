@@ -1,4 +1,4 @@
-package integration
+package postal_code_test
 
 import (
 	"bytes"
