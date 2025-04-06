@@ -25,7 +25,7 @@ export default function GamePage() {
   if (!level) {
     return (
       <div className="relative w-full h-[80vh]">
-        <h1 className="text-2xl font-bold text-center mt-6">🔢 数字<rt>すうじ</rt>タッチゲーム</h1>
+        <h1 className="text-2xl font-bold text-center mt-6">🔢 <ruby>数字<rt>すうじ</rt></ruby>タッチゲーム</h1>
         <LevelSelect onSelectLevel={setLevel} />
       </div>
     );
@@ -34,7 +34,7 @@ export default function GamePage() {
   if (!started) {
     return (
       <div className="relative w-full h-[80vh]">
-        <h1 className="text-2xl font-bold text-center mt-6">🔢 数字<rt>すうじ</rt>タッチゲーム</h1>
+        <h1 className="text-2xl font-bold text-center mt-6">🔢 <ruby>数字<rt>すうじ</rt></ruby>タッチゲーム</h1>
         <StartScreen level={level} onStart={(nums) => {
           setNumbers(nums);
           setStarted(true);
@@ -61,7 +61,7 @@ export default function GamePage() {
 
   return (
     <div className="relative w-full h-[80vh]">
-      <h1 className="text-2xl font-bold text-center mt-6">🔢 数字<rt>すうじ</rt>タッチゲーム</h1>
+      <h1 className="text-2xl font-bold text-center mt-6">🔢 <ruby>数字<rt>すうじ</rt></ruby>タッチゲーム</h1>
       <PlayScreen
         numbers={numbers}
         startTime={startTime}
