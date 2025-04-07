@@ -1,4 +1,3 @@
-// app/game/PlayScreen.tsx
 'use client';
 
 import { useState } from 'react';
@@ -38,15 +37,14 @@ export default function PlayScreen({ numbers, startTime, onClear }: Props) {
             key={`${item.value}-${index}`}
             onClick={() => handleClick(item.value, index)}
             className={`
-              absolute w-16 h-16 rounded-full flex items-center justify-center text-white text-base font-bold
-              transition-all duration-500 ease-in-out
+              absolute w-20 h-20 rounded-full flex items-center justify-center
+              text-white text-2xl font-bold shadow-lg transition-all duration-500 ease-in-out
               ${isPressed
                 ? 'opacity-0 pointer-events-none'
                 : isWrong
-                ? 'bg-red-500 animate-pulse'
-                : 'bg-blue-500 hover:bg-blue-600'
-              }`
-            }
+                ? 'bg-red-400 animate-pulse'
+                : 'bg-blue-400 hover:bg-blue-500'
+              }`}
             style={{
               left: `${item.x}%`,
               top: `${item.y}%`,
