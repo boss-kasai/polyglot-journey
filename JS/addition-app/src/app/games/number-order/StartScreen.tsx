@@ -1,4 +1,3 @@
-// app/game/StartScreen.tsx
 'use client';
 
 import { LevelOption, generateNumbers } from '@/lib/gameUtils';
@@ -15,13 +14,16 @@ export default function StartScreen({ level, onStart }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10 space-y-4">
-      <p className="text-lg font-semibold">レベル：{level}</p>
+    <div className="flex flex-col items-center justify-center min-h-[80vh] space-y-8 px-4 text-center bg-green-50">
+      <p className="text-2xl font-bold text-green-700">
+        <ruby>レベル<rt>れべる</rt></ruby>：{level}
+      </p>
+
       <button
         onClick={handleStart}
-        className="bg-green-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-green-600"
+        className="bg-green-400 text-white text-xl font-bold px-8 py-6 rounded-full shadow-md hover:bg-green-500 transition"
       >
-        スタート！
+        <ruby>スタート<rt>すたーと</rt></ruby>！
       </button>
     </div>
   );
