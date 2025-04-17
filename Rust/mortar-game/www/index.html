@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>迫撃砲シミュレーション</title>
+  <style>canvas { border:1px solid #ccc; }</style>
+</head>
+<body>
+角度: <input id="angle" type="number" value="45">
+速度: <input id="velocity" type="number" value="50">
+<button id="launch">発射</button>
+<p id="result"></p>
+
+<canvas id="canvas" width="600" height="300"></canvas>
+
+<p id="target-coordinates"></p>
+
+<script type="module">
+  import init, { simulate_trajectory } from "../pkg/mortar_game.js";
+
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const resultText = document.getElementById('result');
+  const target = { x: Math.random() * canvas.width, y: 0 }; // Set target height to 0
+
+  // Display target coordinates
+  const targetCoordinates = document.getElementById('target-coordinates');
+  targetCoordinates.textContent = `目標の座標: x = ${target.x.toFixed(2)}, y = ${target.y}`;
+
+  function drawTarget() {
+    ctx.beginPath();
+    ctx.arc(target.x, canvas.height - target.y, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = 'red';
+    ctx.fill();
+  }
+
+  async function drawTrajectory(angle, velocity) {
+    await init();
+    const trajectory = simulate_trajectory(angle, velocity, 0.1);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+
+    let hit = false;
+    trajectory.forEach((point, idx) => {
+      const x = point.x;
+      const y = canvas.height - point.y;
+      idx === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+
+      // Check if the point is close to the target
+      if (Math.abs(x - target.x) < 10 && Math.abs(canvas.height - y - target.y) < 10) {
+        hit = true;
+      }
+    });
+
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    drawTarget();
+
+    ctx.beginPath();
+    ctx.arc(0, canvas.height, 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Display the result as text on the page
+    setTimeout(() => {
+      resultText.textContent = hit ? '命中しました！' : '外れました。';
+    }, 400);
+  }
+
+  drawTarget();
+
+  document.getElementById('launch').onclick = () => {
+    const angle = parseFloat(document.getElementById('angle').value);
+    const velocity = parseFloat(document.getElementById('velocity').value);
+    resultText.textContent = ''; // Clear previous result
+    drawTrajectory(angle, velocity);
+  };
+</script>
+</body>
+</html>
