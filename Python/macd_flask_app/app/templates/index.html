@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MACD分析ツール</title>
+</head>
+<body>
+  <h1>MACDチャート生成</h1>
+  <form method="POST">
+    <label>銘柄シンボル（例: AAPL）:</label>
+    <input type="text" name="symbol" required>
+    <button type="submit">分析</button>
+  </form>
+
+  {% if chart %}
+    <h2>{{ symbol }} のMACDチャート</h2>
+    <img src="data:image/png;base64,{{ chart }}" />
+  {% endif %}
+</body>
+</html>
