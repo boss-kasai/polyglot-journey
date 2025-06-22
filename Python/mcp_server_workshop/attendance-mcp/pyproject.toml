@@ -1,0 +1,11 @@
+[project]
+name = "attendance-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi-mcp>=0.3.4",
+    "fastapi[all]>=0.115.13",
+    "sqlmodel>=0.0.24",
+]
